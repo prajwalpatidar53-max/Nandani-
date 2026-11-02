@@ -159,17 +159,28 @@ export const Lightbox: React.FC<LightboxProps> = ({ photos, currentPhotoId, onCl
       {/* Main Image Container */}
       <div className="flex flex-col items-center justify-center max-w-4xl w-full max-h-[90vh]">
         <div className="relative overflow-hidden flex items-center justify-center max-h-[70vh] w-full p-2">
-          <img
-            src={currentPhoto.src}
-            alt={currentPhoto.title}
-            className={`max-h-[66vh] max-w-full object-contain rounded-xl shadow-[0_10px_40px_rgba(216,199,255,0.25)] border-2 border-white/20 transition-all duration-300 ease-out select-none ${
-              isZoomed ? 'scale-150 cursor-zoom-out' : 'scale-100 cursor-zoom-in'
-            }`}
-            style={{
-              transform: `rotate(${rotation}deg) scale(${isZoomed ? 1.4 : 1})`,
-            }}
-            onClick={handleZoomToggle}
-          />
+          <picture>
+            {currentPhoto.fallbackSrc && (
+              <source type="image/jpeg" srcSet={currentPhoto.fallbackSrc} />
+            )}
+            <img
+              src={currentPhoto.webpSrc || currentPhoto.src}
+              alt={currentPhoto.title}
+              onError={(e) => {
+                const target = e.currentTarget;
+                if (currentPhoto.fallbackSrc && target.src !== currentPhoto.fallbackSrc) {
+                  target.src = currentPhoto.fallbackSrc;
+                }
+              }}
+              className={`max-h-[66vh] max-w-full object-contain rounded-xl shadow-[0_10px_40px_rgba(216,199,255,0.25)] border-2 border-white/20 transition-all duration-300 ease-out select-none ${
+                isZoomed ? 'scale-150 cursor-zoom-out' : 'scale-100 cursor-zoom-in'
+              }`}
+              style={{
+                transform: `rotate(${rotation}deg) scale(${isZoomed ? 1.4 : 1})`,
+              }}
+              onClick={handleZoomToggle}
+            />
+          </picture>
         </div>
 
         {/* Romantic Caption & Info Card */}

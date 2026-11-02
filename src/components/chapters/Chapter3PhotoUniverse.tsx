@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { UNIVERSE_PHOTOS } from '../../data/universeData';
-import { PhotoMemory } from '../../types';
 import { Sparkles, Heart, Eye, Calendar, Tag, Layers, Clock, Star, Maximize2 } from 'lucide-react';
 import { soundManager } from '../../utils/soundSynthesizer';
+import { OptimizedPhoto } from '../OptimizedPhoto';
 
 interface Chapter3Props {
   onPhotoClick: (photoId: string) => void;
@@ -90,22 +90,25 @@ export const Chapter3PhotoUniverse: React.FC<Chapter3Props> = ({ onPhotoClick, o
                 {/* Tape graphic top center */}
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-5 bg-white/40 backdrop-blur-xs border border-white/60 shadow-xs rotate-[-2deg]" />
 
-                {/* Photo container */}
+                {/* Photo container with progressive loading */}
                 <div className="relative aspect-[4/5] w-full overflow-hidden bg-[#21132F] rounded-xs mb-3 flex items-center justify-center">
-                  <img
-                    src={photo.src}
+                  <OptimizedPhoto
+                    src={photo.webpSrc || photo.src}
+                    fallbackSrc={photo.fallbackSrc}
+                    placeholder={photo.placeholder}
                     alt={photo.title}
-                    loading="lazy"
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    priority={index < 3}
+                    aspectRatioClass="aspect-[4/5]"
+                    className="transition-transform duration-500 group-hover:scale-105"
                     style={{
                       transform: photo.defaultRotation
-                        ? `rotate(${photo.defaultRotation}deg) scale(${photo.defaultRotation % 180 !== 0 ? 1.38 : 1})`
+                        ? `rotate(${photo.defaultRotation}deg)`
                         : undefined,
                     }}
                   />
 
                   {/* Hover view overlay */}
-                  <div className="absolute inset-0 bg-[#21132F]/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <div className="absolute inset-0 bg-[#21132F]/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
                     <span className="p-2.5 rounded-full bg-white/20 backdrop-blur-md text-white">
                       <Maximize2 className="w-5 h-5" />
                     </span>
@@ -129,7 +132,7 @@ export const Chapter3PhotoUniverse: React.FC<Chapter3Props> = ({ onPhotoClick, o
       {/* VIEW B: Interactive Memory Cards */}
       {viewMode === 'cards' && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {UNIVERSE_PHOTOS.map((photo) => {
+          {UNIVERSE_PHOTOS.map((photo, index) => {
             const isRevealed = !!revealedCaptions[photo.id];
             return (
               <div
@@ -139,18 +142,21 @@ export const Chapter3PhotoUniverse: React.FC<Chapter3Props> = ({ onPhotoClick, o
               >
                 {/* Photo section */}
                 <div className="relative aspect-[4/3] w-full overflow-hidden bg-black/40 flex items-center justify-center">
-                  <img
-                    src={photo.src}
+                  <OptimizedPhoto
+                    src={photo.webpSrc || photo.src}
+                    fallbackSrc={photo.fallbackSrc}
+                    placeholder={photo.placeholder}
                     alt={photo.title}
-                    loading="lazy"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    priority={index < 2}
+                    aspectRatioClass="aspect-[4/3]"
+                    className="group-hover:scale-105 transition-transform duration-500"
                     style={{
                       transform: photo.defaultRotation
-                        ? `rotate(${photo.defaultRotation}deg) scale(${photo.defaultRotation % 180 !== 0 ? 1.35 : 1})`
+                        ? `rotate(${photo.defaultRotation}deg)`
                         : undefined,
                     }}
                   />
-                  <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-[10px] text-[#D8C7FF] flex items-center gap-1">
+                  <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-[10px] text-[#D8C7FF] flex items-center gap-1 pointer-events-none">
                     <Tag className="w-3 h-3" />
                     {photo.tag}
                   </span>
@@ -218,14 +224,17 @@ export const Chapter3PhotoUniverse: React.FC<Chapter3Props> = ({ onPhotoClick, o
               >
                 <div className="flex flex-col sm:flex-row gap-4 items-center">
                   <div className="w-full sm:w-36 h-36 shrink-0 rounded-xl overflow-hidden bg-black/40 flex items-center justify-center">
-                    <img
-                      src={photo.src}
+                    <OptimizedPhoto
+                      src={photo.webpSrc || photo.src}
+                      fallbackSrc={photo.fallbackSrc}
+                      placeholder={photo.placeholder}
                       alt={photo.title}
-                      loading="lazy"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                      aspectRatioClass="w-full sm:w-36 h-36"
+                      containerClassName="rounded-xl"
+                      className="group-hover:scale-105 transition-transform"
                       style={{
                         transform: photo.defaultRotation
-                          ? `rotate(${photo.defaultRotation}deg) scale(${photo.defaultRotation % 180 !== 0 ? 1.35 : 1})`
+                          ? `rotate(${photo.defaultRotation}deg)`
                           : undefined,
                       }}
                     />
@@ -263,25 +272,28 @@ export const Chapter3PhotoUniverse: React.FC<Chapter3Props> = ({ onPhotoClick, o
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {favoritePhotos.map((photo) => (
+            {favoritePhotos.map((photo, index) => (
               <div
                 key={photo.id}
                 onClick={() => handlePhotoSelect(photo.id)}
                 className="group cursor-pointer relative rounded-3xl overflow-hidden border-2 border-[#D8C7FF] shadow-[0_10px_35px_rgba(216,199,255,0.3)] bg-[#21132F]"
               >
                 <div className="aspect-[3/4] w-full overflow-hidden relative flex items-center justify-center">
-                  <img
-                    src={photo.src}
+                  <OptimizedPhoto
+                    src={photo.webpSrc || photo.src}
+                    fallbackSrc={photo.fallbackSrc}
+                    placeholder={photo.placeholder}
                     alt={photo.title}
-                    loading="lazy"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    priority={index < 2}
+                    aspectRatioClass="aspect-[3/4]"
+                    className="group-hover:scale-110 transition-transform duration-700"
                     style={{
                       transform: photo.defaultRotation
-                        ? `rotate(${photo.defaultRotation}deg) scale(${photo.defaultRotation % 180 !== 0 ? 1.38 : 1})`
+                        ? `rotate(${photo.defaultRotation}deg)`
                         : undefined,
                     }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#21132F] via-[#21132F]/30 to-transparent flex flex-col justify-end p-5">
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#21132F] via-[#21132F]/30 to-transparent flex flex-col justify-end p-5 pointer-events-none">
                     <span className="text-xs text-[#FFD700] font-semibold flex items-center gap-1 mb-1">
                       <Star className="w-3.5 h-3.5 fill-current" /> Favorite Memory
                     </span>

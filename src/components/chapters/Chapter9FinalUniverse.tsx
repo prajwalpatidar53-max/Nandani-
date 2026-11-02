@@ -74,8 +74,16 @@ export const Chapter9FinalUniverse: React.FC<Chapter9Props> = ({
                 title={photo.title}
               >
                 <img
-                  src={photo.src}
+                  src={photo.webpSrc || photo.src}
                   alt={photo.title}
+                  loading="lazy"
+                  decoding="async"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (photo.fallbackSrc && target.src !== photo.fallbackSrc) {
+                      target.src = photo.fallbackSrc;
+                    }
+                  }}
                   className="w-full h-full object-cover"
                   style={{
                     transform: photo.defaultRotation ? `rotate(${photo.defaultRotation}deg)` : undefined,

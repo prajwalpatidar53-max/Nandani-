@@ -29,28 +29,33 @@ export const OptimizedPhoto: React.FC<OptimizedPhotoProps> = ({
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [hasError, setHasError] = useState<boolean>(false);
   const [currentSrc, setCurrentSrc] = useState<string>(src);
-  const [attemptedFallback, setAttemptedFallback] = useState<boolean>(false);
+  const [fallbackAttempt, setFallbackAttempt] = useState<number>(0);
 
-  // Compute clean URL relative to current deployment base
-  const resolveUrl = (url: string) => {
-    if (!url) return '';
-    if (url.startsWith('data:') || url.startsWith('http://') || url.startsWith('https://')) {
-      return url;
+  // Extract base file name in case secondary fallbacks are needed
+  const extractFilename = (url: string) => {
+    try {
+      const clean = url.split('?')[0].split('#')[0];
+      const parts = clean.split('/');
+      const last = parts[parts.length - 1];
+      return last.replace(/\.(webp|jpg|jpeg|png)$/i, '');
+    } catch {
+      return '';
     }
-    const base = import.meta.env.BASE_URL || '/';
-    const cleanBase = base.endsWith('/') ? base.slice(0, -1) : base;
-    const cleanPath = url.startsWith('/') ? url : `/${url}`;
-    return `${cleanBase}${cleanPath}`;
   };
 
-  const primaryUrl = resolveUrl(currentSrc);
-  const fallbackUrl = fallbackSrc ? resolveUrl(fallbackSrc) : '';
-
   const handleError = () => {
-    // If WebP fails, try the fallback JPG once
-    if (!attemptedFallback && fallbackUrl && currentSrc !== fallbackSrc) {
-      setAttemptedFallback(true);
-      setCurrentSrc(fallbackSrc!);
+    const baseName = extractFilename(src);
+    if (fallbackAttempt === 0 && fallbackSrc && currentSrc !== fallbackSrc) {
+      setFallbackAttempt(1);
+      setCurrentSrc(fallbackSrc);
+    } else if (fallbackAttempt <= 1 && baseName) {
+      setFallbackAttempt(2);
+      // Secondary fallback to public/assets/photos JPG
+      setCurrentSrc(`/assets/photos/${baseName}.jpg`);
+    } else if (fallbackAttempt <= 2 && baseName) {
+      setFallbackAttempt(3);
+      // Tertiary fallback to public/assets/aistudio JPG
+      setCurrentSrc(`/assets/aistudio/${baseName}.jpg`);
     } else {
       setHasError(true);
     }
@@ -59,8 +64,9 @@ export const OptimizedPhoto: React.FC<OptimizedPhotoProps> = ({
   const handleRetry = (e: React.MouseEvent) => {
     e.stopPropagation();
     setHasError(false);
-    setAttemptedFallback(false);
-    setCurrentSrc(`${src}?retry=${Date.now()}`);
+    setFallbackAttempt(0);
+    setIsLoaded(false);
+    setCurrentSrc(`${src}?t=${Date.now()}`);
   };
 
   return (
@@ -68,15 +74,15 @@ export const OptimizedPhoto: React.FC<OptimizedPhotoProps> = ({
       className={`relative overflow-hidden w-full ${aspectRatioClass} bg-[#21132F] rounded-sm select-none ${containerClassName}`}
       onClick={onClick}
     >
-      {/* 1. Instant Shimmering Lavender Placeholder */}
+      {/* 1. Instant Shimmering Lavender Placeholder / Micro Blur preview */}
       {!isLoaded && !hasError && (
-        <div className="absolute inset-0 z-0 flex flex-col items-center justify-center bg-gradient-to-b from-[#2a173d] via-[#21132F] to-[#1a0e26] animate-pulse">
+        <div className="absolute inset-0 z-0 flex flex-col items-center justify-center bg-gradient-to-b from-[#2a173d] via-[#21132F] to-[#1a0e26]">
           {placeholder ? (
             <img
               src={placeholder}
               alt=""
               aria-hidden="true"
-              className="absolute inset-0 w-full h-full object-cover blur-lg scale-110 opacity-70"
+              className="absolute inset-0 w-full h-full object-cover blur-md scale-110 opacity-70"
             />
           ) : (
             <div className="flex flex-col items-center justify-center gap-2 text-[#D8C7FF]/40">
@@ -91,20 +97,17 @@ export const OptimizedPhoto: React.FC<OptimizedPhotoProps> = ({
         </div>
       )}
 
-      {/* 2. Responsive WebP Picture with Fallback */}
+      {/* 2. Responsive Image with smooth fade-in */}
       {!hasError ? (
         <picture>
-          {primaryUrl.endsWith('.webp') && (
-            <source type="image/webp" srcSet={primaryUrl} />
-          )}
-          {fallbackUrl && fallbackUrl.endsWith('.jpg') && (
-            <source type="image/jpeg" srcSet={fallbackUrl} />
+          {fallbackSrc && fallbackSrc.endsWith('.webp') && (
+            <source type="image/webp" srcSet={fallbackSrc} />
           )}
           <img
-            src={primaryUrl}
+            src={currentSrc}
             alt={alt}
             loading={priority ? 'eager' : 'lazy'}
-            decoding={priority ? 'sync' : 'async'}
+            decoding="async"
             fetchPriority={priority ? 'high' : 'auto'}
             onLoad={() => setIsLoaded(true)}
             onError={handleError}
