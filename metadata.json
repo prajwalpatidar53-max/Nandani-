@@ -1,0 +1,6 @@
+{
+  "name": "The Universe of Nandani",
+  "description": "An extraordinary interactive birthday love experience for Nandani, made with love by Prajjwal.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
