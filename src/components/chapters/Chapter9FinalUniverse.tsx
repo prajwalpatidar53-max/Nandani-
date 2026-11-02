@@ -2,6 +2,7 @@ import React from 'react';
 import { UNIVERSE_PHOTOS } from '../../data/universeData';
 import { Sparkles, Heart, RotateCcw, Share2, Compass } from 'lucide-react';
 import { soundManager } from '../../utils/soundSynthesizer';
+import { VirtualGuestbook } from '../VirtualGuestbook';
 import confetti from 'canvas-confetti';
 
 interface Chapter9Props {
@@ -114,6 +115,9 @@ export const Chapter9FinalUniverse: React.FC<Chapter9Props> = ({
           Wherever life takes us, through every triumph, every quiet morning, every celebration, and every challenge, my hand will always be reaching for yours. Happy Birthday to the most extraordinary girl in this galaxy.
         </p>
       </div>
+
+      {/* Virtual Guestbook Component with Floating Wishes */}
+      <VirtualGuestbook />
 
       {/* Action Buttons */}
       <div className="flex flex-wrap items-center justify-center gap-4">
