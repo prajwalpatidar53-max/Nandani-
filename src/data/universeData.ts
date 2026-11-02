@@ -132,7 +132,7 @@ export const UNIVERSE_PHOTOS: PhotoMemory[] = [
     tag: 'playful',
     isPortrait: false,
     isFavorite: false,
-    defaultRotation: 90,
+    defaultRotation: 270,
   },
   {
     id: 'photo-snap-carnival',
@@ -144,7 +144,7 @@ export const UNIVERSE_PHOTOS: PhotoMemory[] = [
     tag: 'playful',
     isPortrait: false,
     isFavorite: false,
-    defaultRotation: 90,
+    defaultRotation: 270,
   },
 ];
 
