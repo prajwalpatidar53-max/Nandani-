@@ -20,7 +20,8 @@ export const Chapter8MemoryGame: React.FC<Chapter8Props> = ({ onNextChapter }) =
 
   const handleSelectOption = (optionIndex: number) => {
     if (revealedFeedback) return;
-    const isCorrect = evaluateQuizAnswer(optionIndex, currentQ.correctAnswer);
+    const evalResult = evaluateQuizAnswer(optionIndex, currentQ?.correctAnswer ?? 0);
+    const isCorrect = evalResult.isCorrect;
     setSelectedAnswers((prev) => ({ ...prev, [currentQIndex]: optionIndex }));
     setRevealedFeedback(true);
 

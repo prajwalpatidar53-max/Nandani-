@@ -4,13 +4,16 @@ export interface PhotoMemory {
   id: string;
   url: string;
   src: string;
+  webpSrc?: string;
+  fallbackSrc?: string;
+  placeholder?: string;
   title: string;
   caption: string;
   date: string;
   tag: 'favorite' | 'candid' | 'romantic' | 'playful' | 'celebration';
   isPortrait?: boolean;
   isFavorite?: boolean;
-  defaultRotation?: number; // e.g. 90 for rotated snaps
+  defaultRotation?: number; // e.g. 0 now since natively upright
 }
 
 export type TransitionType =
@@ -37,7 +40,7 @@ export type TransitionType =
 
 export interface ReasonItem {
   id: number;
-  theme:
+  theme?:
     | 'Her Smile'
     | 'Her Eyes'
     | 'Her Personality'
@@ -47,7 +50,8 @@ export interface ReasonItem {
     | 'Her Way of Talking'
     | 'Her Presence'
     | 'Her Little Gestures'
-    | 'The Happiness She Brings';
+    | 'The Happiness She Brings'
+    | string;
   category?: string;
   title?: string;
   text: string;

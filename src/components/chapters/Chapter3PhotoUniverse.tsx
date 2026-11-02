@@ -91,14 +91,16 @@ export const Chapter3PhotoUniverse: React.FC<Chapter3Props> = ({ onPhotoClick, o
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-5 bg-white/40 backdrop-blur-xs border border-white/60 shadow-xs rotate-[-2deg]" />
 
                 {/* Photo container */}
-                <div className="relative aspect-[4/5] w-full overflow-hidden bg-[#21132F] rounded-xs mb-3">
+                <div className="relative aspect-[4/5] w-full overflow-hidden bg-[#21132F] rounded-xs mb-3 flex items-center justify-center">
                   <img
                     src={photo.src}
                     alt={photo.title}
                     loading="lazy"
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     style={{
-                      transform: photo.defaultRotation ? `rotate(${photo.defaultRotation}deg)` : undefined,
+                      transform: photo.defaultRotation
+                        ? `rotate(${photo.defaultRotation}deg) scale(${photo.defaultRotation % 180 !== 0 ? 1.38 : 1})`
+                        : undefined,
                     }}
                   />
 
@@ -136,14 +138,16 @@ export const Chapter3PhotoUniverse: React.FC<Chapter3Props> = ({ onPhotoClick, o
                 className="group relative cursor-pointer backdrop-blur-xl bg-[#21132F]/80 border border-[#D8C7FF]/30 rounded-3xl overflow-hidden shadow-xl transition-all duration-300 hover:border-[#D8C7FF] hover:shadow-[0_12px_36px_rgba(155,123,211,0.3)] flex flex-col"
               >
                 {/* Photo section */}
-                <div className="relative aspect-[4/3] w-full overflow-hidden bg-black/40">
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-black/40 flex items-center justify-center">
                   <img
                     src={photo.src}
                     alt={photo.title}
                     loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     style={{
-                      transform: photo.defaultRotation ? `rotate(${photo.defaultRotation}deg)` : undefined,
+                      transform: photo.defaultRotation
+                        ? `rotate(${photo.defaultRotation}deg) scale(${photo.defaultRotation % 180 !== 0 ? 1.35 : 1})`
+                        : undefined,
                     }}
                   />
                   <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-[10px] text-[#D8C7FF] flex items-center gap-1">
@@ -213,14 +217,16 @@ export const Chapter3PhotoUniverse: React.FC<Chapter3Props> = ({ onPhotoClick, o
                 className="cursor-pointer max-w-xl backdrop-blur-xl bg-[#21132F]/80 border border-[#D8C7FF]/30 rounded-2xl p-4 shadow-xl hover:scale-102 hover:border-[#D8C7FF] transition-all"
               >
                 <div className="flex flex-col sm:flex-row gap-4 items-center">
-                  <div className="w-full sm:w-36 h-36 shrink-0 rounded-xl overflow-hidden bg-black/40">
+                  <div className="w-full sm:w-36 h-36 shrink-0 rounded-xl overflow-hidden bg-black/40 flex items-center justify-center">
                     <img
                       src={photo.src}
                       alt={photo.title}
                       loading="lazy"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                       style={{
-                        transform: photo.defaultRotation ? `rotate(${photo.defaultRotation}deg)` : undefined,
+                        transform: photo.defaultRotation
+                          ? `rotate(${photo.defaultRotation}deg) scale(${photo.defaultRotation % 180 !== 0 ? 1.35 : 1})`
+                          : undefined,
                       }}
                     />
                   </div>
@@ -263,14 +269,16 @@ export const Chapter3PhotoUniverse: React.FC<Chapter3Props> = ({ onPhotoClick, o
                 onClick={() => handlePhotoSelect(photo.id)}
                 className="group cursor-pointer relative rounded-3xl overflow-hidden border-2 border-[#D8C7FF] shadow-[0_10px_35px_rgba(216,199,255,0.3)] bg-[#21132F]"
               >
-                <div className="aspect-[3/4] w-full overflow-hidden relative">
+                <div className="aspect-[3/4] w-full overflow-hidden relative flex items-center justify-center">
                   <img
                     src={photo.src}
                     alt={photo.title}
                     loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     style={{
-                      transform: photo.defaultRotation ? `rotate(${photo.defaultRotation}deg)` : undefined,
+                      transform: photo.defaultRotation
+                        ? `rotate(${photo.defaultRotation}deg) scale(${photo.defaultRotation % 180 !== 0 ? 1.38 : 1})`
+                        : undefined,
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#21132F] via-[#21132F]/30 to-transparent flex flex-col justify-end p-5">

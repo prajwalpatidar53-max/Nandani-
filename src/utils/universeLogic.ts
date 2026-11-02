@@ -51,12 +51,13 @@ export function filterReasons(
 ): ReasonItem[] {
   const query = searchQuery.trim().toLowerCase();
   return reasons.filter(r => {
-    const matchesTheme = activeTheme === 'All' || r.theme === activeTheme;
+    const themeStr = r.theme || r.category || '';
+    const matchesTheme = activeTheme === 'All' || themeStr === activeTheme;
     const matchesQuery =
       !query ||
       r.text.toLowerCase().includes(query) ||
       r.id.toString() === query ||
-      r.theme.toLowerCase().includes(query);
+      themeStr.toLowerCase().includes(query);
     return matchesTheme && matchesQuery;
   });
 }
@@ -67,7 +68,7 @@ export function filterReasons(
 export function evaluateQuizAnswer(
   selectedIndex: number,
   correctIndex: number,
-  sweetMessage: string
+  sweetMessage: string = "Correct, my love! You know us so well! 💜"
 ): { isCorrect: boolean; response: string } {
   if (selectedIndex === correctIndex) {
     return {
@@ -84,7 +85,7 @@ export function evaluateQuizAnswer(
 /**
  * Checks if all gift boxes are opened.
  */
-export function areAllGiftsOpened(openedGiftIds: number[], totalGifts: number = 5): boolean {
-  const unique = new Set(openedGiftIds);
-  return unique.size >= totalGifts;
+export function areAllGiftsOpened(openedGiftIds: number[] | Set<number>, totalGifts: number = 5): boolean {
+  const size = openedGiftIds instanceof Set ? openedGiftIds.size : new Set(openedGiftIds).size;
+  return size >= totalGifts;
 }
